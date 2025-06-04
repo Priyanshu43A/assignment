@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import connectDB from "./config/database.js";
 import authRoutes from "./routes/auth.routes.js";
+import amazonAuthRoutes from "./routes/amazonAuth.js";
 
 // ES Module fix for __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -30,6 +31,7 @@ app.use(morgan("dev")); // HTTP request logger
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/amazon", amazonAuthRoutes);
 
 // Health check endpoint
 app.get("/health", (req, res) => {
@@ -59,7 +61,7 @@ app.use((req, res) => {
 
 // Start server
 if (process.env.NODE_ENV !== "test") {
-  const PORT = process.env.PORT || 3000;
+  const PORT = 3000;
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });

@@ -5,6 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as yup from "yup";
 import dashboard from "../assets/illustration.png";
+import { useUser } from "../zustand/user";
 
 // Get base URL from environment variable
 const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:3000";
@@ -28,6 +29,7 @@ const Login = () => {
   const [focusedField, setFocusedField] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const { setUser, setAccessToken } = useUser();
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
@@ -97,8 +99,9 @@ const Login = () => {
         throw new Error(data.message || "Failed to login");
       }
 
-      // Store the token in localStorage
-      localStorage.setItem("token", data.token);
+      //store user and token in zustand
+      setUser(data.data);
+      setAccessToken(data.data.accessToken);
 
       // Show success message
       toast.success("Successfully logged in!");
@@ -283,7 +286,7 @@ const Login = () => {
               <span className="text-gray-600">Don't have an account? </span>
               <button
                 onClick={() => navigate("/signup")}
-                className="text-blue-600 hover:text-blue-700 font-medium"
+                className="text-blue-600 cursor-pointer hover:text-blue-700 font-medium"
               >
                 Sign Up
               </button>

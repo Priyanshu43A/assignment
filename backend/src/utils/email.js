@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import "dotenv/config"; // Ensure dotenv is loaded before importing other modules
 import { emailTemplates } from "./emailTemplates.js";
 
 let transporter;
@@ -7,6 +8,7 @@ let transporter;
 const validateEnv = () => {
   // Force development mode if NODE_ENV is not set
   if (!process.env.NODE_ENV) {
+    console.log("NODE_ENV is not set. Defaulting to 'development'.");
     process.env.NODE_ENV = "development";
   }
   console.log("Environment:", process.env.NODE_ENV);

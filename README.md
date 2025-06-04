@@ -1,34 +1,64 @@
-# Node.js Authentication System
+# Amazon Seller Integration Platform
 
-A secure and scalable authentication system built with Node.js, Express, and MongoDB.
+A full-stack application that allows users to connect their Amazon Seller accounts through OAuth 2.0 authentication. This platform enables secure integration with Amazon's Selling Partner API, providing a seamless experience for managing seller accounts across different marketplaces.
 
 ## Features
 
-- User registration with email verification
-- Secure password hashing
-- JWT-based authentication
-- Refresh token mechanism
-- Rate limiting
-- Account locking after failed attempts
-- Account deactivation/reactivation
-- Email verification with OTP
-- Comprehensive error handling
-- Security best practices
-- Ethereal email testing in development
+- OAuth 2.0 integration with Amazon Seller Central
+- Support for multiple Amazon marketplaces:
+  - North America
+  - Europe
+  - Far East
+  - India
+- Secure token management and automatic refresh
+- Modern, responsive UI built with React and Ant Design
+- RESTful API architecture with Express.js
+- MongoDB for persistent storage
+- Environment-based configuration
 
 ## Prerequisites
 
-- Node.js (v14 or higher)
-- MongoDB
-- SMTP server for email functionality (production only)
+Before you begin, ensure you have the following installed:
 
-## Installation
+- Node.js (v14.0.0 or higher)
+- MongoDB (v4.4 or higher)
+- npm or yarn package manager
 
-1. Clone the repository:
+## Project Structure
+
+```
+├── backend/                 # Backend server
+│   ├── src/
+│   │   ├── config/         # Configuration files
+│   │   ├── controllers/    # Route controllers
+│   │   ├── models/         # Database models
+│   │   ├── routes/         # API routes
+│   │   └── index.js        # Server entry point
+│   └── package.json
+│
+└── frontend/               # Frontend application
+    ├── src/
+    │   ├── components/     # React components
+    │   ├── pages/         # Page components
+    │   └── App.js         # Main application component
+    └── package.json
+```
+
+## Setup Instructions
+
+### 1. Clone the Repository
 
 ```bash
 git clone <repository-url>
 cd <project-directory>
+```
+
+### 2. Backend Setup
+
+1. Navigate to the backend directory:
+
+```bash
+cd backend
 ```
 
 2. Install dependencies:
@@ -37,225 +67,196 @@ cd <project-directory>
 npm install
 ```
 
-3. Create a `.env` file in the root directory with the following variables:
-
-For development:
+3. Create a `.env` file in the backend directory with the following content:
 
 ```env
-PORT=3000
-MONGODB_URI=mongodb://localhost:27017/your_database
-JWT_SECRET=your_jwt_secret_key
-JWT_REFRESH_SECRET=your_jwt_refresh_secret_key
+# Amazon OAuth Configuration
+AMAZON_CLIENT_ID=your_client_id_here
+AMAZON_CLIENT_SECRET=your_client_secret_here
+AMAZON_REDIRECT_URI=http://localhost:5000/api/amazon/callback
+
+# Frontend URL
+FRONTEND_URL=http://localhost:3000
+
+# MongoDB Configuration
+MONGODB_URI=mongodb://localhost:27017/your_database_name
+
+# Server Configuration
+PORT=5000
 NODE_ENV=development
 ```
 
-For production:
+4. Start the backend server:
 
-```env
-PORT=3000
-MONGODB_URI=mongodb://localhost:27017/your_database
-JWT_SECRET=your_jwt_secret_key
-JWT_REFRESH_SECRET=your_jwt_refresh_secret_key
-SMTP_HOST=your_smtp_host
-SMTP_PORT=587
-SMTP_SECURE=false
-SMTP_USER=your_smtp_username
-SMTP_PASS=your_smtp_password
-SMTP_FROM=noreply@yourdomain.com
-NODE_ENV=production
+```bash
+npm run dev
 ```
 
-4. Start the server:
+### 3. Frontend Setup
+
+1. Navigate to the frontend directory:
+
+```bash
+cd frontend
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Create a `.env` file in the frontend directory:
+
+```env
+REACT_APP_API_URL=http://localhost:5000/api
+```
+
+4. Start the frontend development server:
 
 ```bash
 npm start
 ```
 
-## Email Testing in Development
+## Amazon Seller Central Setup
 
-The system uses Ethereal Email for testing email functionality in development mode. When `NODE_ENV` is set to "development":
+To use this application, you need to register it in Amazon Seller Central:
 
-1. A test Ethereal account is automatically created
-2. All emails are sent to this test account
-3. No actual emails are delivered
-4. Preview URLs are logged to the console for viewing test emails
-5. You can view the test emails at the provided Ethereal preview URL
+1. Go to [Amazon Seller Central Developer Console](https://sellercentral.amazon.com/apps/develop)
+2. Click "Create New App"
+3. Fill in the required information:
+   - App Name: Your application name
+   - App Description: Brief description of your application
+   - App Logo: Your application logo
+4. Under "OAuth Configuration":
+   - Add your redirect URI: `http://localhost:5000/api/amazon/callback`
+   - Select the required scopes for your application
+5. Save the Client ID and Client Secret for your `.env` file
 
-To view test emails:
+## Environment Variables
 
-1. Check the console logs for the Ethereal preview URL
-2. Click the URL to open the Ethereal web interface
-3. View the email content and verify the OTP
+### Backend (.env)
 
-## API Documentation
+| Variable             | Description                           | Example                                          |
+| -------------------- | ------------------------------------- | ------------------------------------------------ |
+| AMAZON_CLIENT_ID     | Your Amazon application client ID     | amzn1.application-oa2-client.1234567890abcdef    |
+| AMAZON_CLIENT_SECRET | Your Amazon application client secret | abcdef1234567890abcdef1234567890abcdef1234567890 |
+| AMAZON_REDIRECT_URI  | OAuth callback URL                    | http://localhost:5000/api/amazon/callback        |
+| FRONTEND_URL         | URL of your frontend application      | http://localhost:3000                            |
+| MONGODB_URI          | MongoDB connection string             | mongodb://localhost:27017/your_database_name     |
+| PORT                 | Backend server port                   | 5000                                             |
+| NODE_ENV             | Environment mode                      | development                                      |
 
-### Authentication Endpoints
+### Frontend (.env)
 
-#### 1. Signup
+| Variable          | Description     | Example                   |
+| ----------------- | --------------- | ------------------------- |
+| REACT_APP_API_URL | Backend API URL | http://localhost:5000/api |
 
-```http
-POST /api/auth/signup
-Content-Type: application/json
+## API Endpoints
 
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "SecurePass123!"
-}
-```
+### Amazon OAuth
 
-#### 2. Email Verification
+- `GET /api/amazon/auth-url`: Get Amazon authorization URL
 
-```http
-POST /api/auth/verify-email
-Content-Type: application/json
+  - Query Parameters:
+    - `region`: Marketplace region (na, eu, fe, in)
+  - Response: `{ authUrl: string }`
 
-{
-  "email": "john@example.com",
-  "otp": "123456"
-}
-```
+- `GET /api/amazon/callback`: OAuth callback endpoint
 
-#### 3. Resend Verification OTP
+  - Query Parameters:
+    - `code`: Authorization code
+    - `selling_partner_id`: Amazon seller ID
+    - `marketplace_id`: Amazon marketplace ID
 
-```http
-POST /api/auth/resend-verification
-Content-Type: application/json
-
-{
-  "email": "john@example.com"
-}
-```
-
-#### 4. Login
-
-```http
-POST /api/auth/login
-Content-Type: application/json
-
-{
-  "email": "john@example.com",
-  "password": "SecurePass123!"
-}
-```
-
-#### 5. Refresh Token
-
-```http
-POST /api/auth/refresh-token
-Content-Type: application/json
-
-{
-  "refreshToken": "your_refresh_token"
-}
-```
-
-#### 6. Deactivate Account
-
-```http
-POST /api/auth/deactivate
-Authorization: Bearer your_access_token
-```
-
-#### 7. Reactivate Account
-
-```http
-POST /api/auth/reactivate
-Content-Type: application/json
-
-{
-  "email": "john@example.com",
-  "password": "SecurePass123!"
-}
-```
-
-## Security Features
-
-### Rate Limiting
-
-- General API: 100 requests per 15 minutes
-- Auth routes: 5 attempts per hour
-- OTP requests: 3 attempts per hour
-
-### Account Security
-
-- Password requirements:
-  - Minimum 8 characters
-  - At least one uppercase letter
-  - At least one lowercase letter
-  - At least one number
-  - At least one special character
-- Account locking after 5 failed login attempts
-- 2-hour lock duration
-- Email verification required for login
-- JWT token expiration (1 hour for access token, 7 days for refresh token)
-
-### Error Handling
-
-- Detailed error messages in development
-- Sanitized error messages in production
-- Proper HTTP status codes
-- Consistent response format
-
-## Response Format
-
-All API responses follow this format:
-
-```json
-{
-  "success": true|false,
-  "message": "Response message",
-  "data": {
-    // Response data (if any)
-  },
-  "error": "Error details (development only)"
-}
-```
-
-## Error Codes
-
-- 400: Bad Request
-- 401: Unauthorized
-- 403: Forbidden
-- 404: Not Found
-- 429: Too Many Requests
-- 500: Internal Server Error
+- `POST /api/amazon/refresh-token/:sellerId`: Refresh access token
+  - URL Parameters:
+    - `sellerId`: Amazon seller ID
+  - Response: `{ success: boolean }`
 
 ## Development
 
 ### Running Tests
 
 ```bash
+# Backend tests
+cd backend
+npm test
+
+# Frontend tests
+cd frontend
 npm test
 ```
 
-### Linting
+### Code Style
+
+The project uses ESLint and Prettier for code formatting. To check your code:
 
 ```bash
+# Backend
+cd backend
+npm run lint
+
+# Frontend
+cd frontend
 npm run lint
 ```
 
-## Security Best Practices
+## Security Considerations
 
-1. Always use HTTPS in production
-2. Keep dependencies updated
-3. Use environment variables for sensitive data
-4. Implement proper CORS policies
-5. Use secure headers
-6. Implement rate limiting
-7. Use secure password hashing
-8. Implement proper session management
-9. Use secure cookie settings
-10. Implement proper error handling
+1. Never commit `.env` files to version control
+2. Keep your Amazon OAuth credentials secure
+3. Use HTTPS in production
+4. Implement rate limiting for API endpoints
+5. Validate and sanitize all user inputs
+6. Use secure session management
+7. Implement proper error handling
+
+## Production Deployment
+
+For production deployment:
+
+1. Update environment variables with production values
+2. Set up a production MongoDB instance
+3. Configure proper CORS settings
+4. Set up SSL/TLS certificates
+5. Use a process manager (e.g., PM2)
+6. Set up proper logging and monitoring
+7. Configure backup strategies
+
+## Troubleshooting
+
+### Common Issues
+
+1. **CORS Errors**
+
+   - Ensure CORS is properly configured in the backend
+   - Check that frontend and backend URLs match
+
+2. **MongoDB Connection Issues**
+
+   - Verify MongoDB is running
+   - Check connection string in `.env`
+   - Ensure network access is allowed
+
+3. **OAuth Errors**
+   - Verify client ID and secret
+   - Check redirect URI matches Amazon configuration
+   - Ensure proper scopes are requested
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch
+2. Create a feature branch
 3. Commit your changes
 4. Push to the branch
-5. Create a new Pull Request
+5. Create a Pull Request
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For support, please open an issue in the repository or contact me 918057607415.

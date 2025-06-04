@@ -1,1 +1,29 @@
 @import "tailwindcss";
+
+button {
+  cursor: pointer;
+}
+
+.amazon-auth-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.auth-controls {
+  margin-top: 2rem;
+  display: flex;
+  align-items: center;
+}
+
+h2 {
+  color: #232f3e;
+  margin-bottom: 1rem;
+}
+
+p {
+  color: #666;
+  margin-bottom: 2rem;
+}

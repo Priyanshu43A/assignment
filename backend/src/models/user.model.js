@@ -98,6 +98,11 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
     amazonAccounts: [amazonAccountSchema],
+    sellerToken: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SellerToken", // Reference to SellerToken model
+      required: false, // Optional, can be null if not linked
+    },
   },
   {
     timestamps: true, // Adds createdAt and updatedAt fields

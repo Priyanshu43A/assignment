@@ -372,7 +372,7 @@ const SignupPage = () => {
               <span className="text-gray-600">Already have an account? </span>
               <button
                 onClick={() => navigate("/login")}
-                className="text-blue-600 hover:text-blue-700 font-medium"
+                className="text-blue-600 cursor-pointer hover:text-blue-700 font-medium"
               >
                 Sign In
               </button>
